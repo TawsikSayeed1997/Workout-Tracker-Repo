@@ -4,7 +4,10 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+# Blocks' release pipeline installs dependencies before the image build and may
+# generate package-lock.json even though this repo is maintained with pnpm-lock.
+# npm install reconciles that generated lockfile; npm ci would reject it as stale.
+RUN npm install --no-audit --no-fund
 
 COPY . .
 
