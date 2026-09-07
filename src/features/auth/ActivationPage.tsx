@@ -101,7 +101,9 @@ export function ActivationPage({ code, onNavigate }: ActivationPageProps) {
 
     setPending(true);
     try {
-      const result = responseRecord(await blocksClient.auth.activate({ activationCode: code, email, password, firstName, lastName }));
+      // IAM's endpoints use different names here: validation accepts
+      // `activationCode`, while the final activation endpoint requires `code`.
+      const result = responseRecord(await blocksClient.auth.activate({ code, email, password, firstName, lastName }));
       const failure = responseError(result);
       if (result.isSuccess === false || result.success === false || failure) {
         throw new Error(failure || "The activation request was not accepted. Please check your email and try again.");

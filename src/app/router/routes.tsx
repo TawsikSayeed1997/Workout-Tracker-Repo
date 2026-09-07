@@ -41,7 +41,8 @@ export function AppRouter() {
 
   const isActivationPath = path === "/activate" || /^\/oidc\/activate\/[^/]+\/?$/.test(path);
   if (isActivationPath) {
-    const code = new URLSearchParams(search).get("code") || "";
+    const params = new URLSearchParams(search);
+    const code = (params.get("code") || params.get("activationCode") || "").trim();
     return <ActivationPage code={code} onNavigate={navigate} />;
   }
 
