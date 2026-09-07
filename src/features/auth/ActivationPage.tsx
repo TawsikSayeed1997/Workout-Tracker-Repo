@@ -24,6 +24,15 @@ function getText(record: Record<string, unknown>, ...keys: string[]): string {
   return "";
 }
 
+function responseError(record: Record<string, unknown>): string {
+  const errors = record.errors;
+  if (errors && typeof errors === "object") {
+    const messages = Object.values(errors as Record<string, unknown>).filter((value): value is string => typeof value === "string" && Boolean(value.trim()));
+    if (messages.length) return messages.join(" ");
+  }
+  return "";
+}
+
 function errorMessage(error: unknown): string {
   if (error instanceof Error && error.message) return error.message;
   return "We could not complete this activation. Please request a new invitation from your administrator.";
@@ -34,6 +43,7 @@ export function ActivationPage({ code, onNavigate }: ActivationPageProps) {
   const [checking, setChecking] = useState(Boolean(code));
   const [valid, setValid] = useState(false);
   const [checkError, setCheckError] = useState<string>();
+  const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
@@ -52,12 +62,13 @@ export function ActivationPage({ code, onNavigate }: ActivationPageProps) {
     }
 
     setChecking(true);
-    blocksClient.auth.validateActivation({ code }).then((result) => {
+    blocksClient.auth.validateActivation({ activationCode: code }).then((result) => {
       if (cancelled) return;
       const record = responseRecord(result);
+      const failure = responseError(record);
       const validity = record.valid ?? record.isValid ?? record.IsValid;
-      if (validity === false) {
-        setCheckError("This activation link is invalid or has expired. Please request a new invitation from your administrator.");
+      if (record.isSuccess === false || record.success === false || validity === false || failure) {
+        setCheckError(failure || "This activation link is invalid or has expired. Please request a new invitation from your administrator.");
         setValid(false);
         return;
       }
@@ -90,7 +101,11 @@ export function ActivationPage({ code, onNavigate }: ActivationPageProps) {
 
     setPending(true);
     try {
-      await blocksClient.auth.activate({ code, password, firstName, lastName });
+      const result = responseRecord(await blocksClient.auth.activate({ activationCode: code, email, password, firstName, lastName }));
+      const failure = responseError(result);
+      if (result.isSuccess === false || result.success === false || failure) {
+        throw new Error(failure || "The activation request was not accepted. Please check your email and try again.");
+      }
       setActivated(true);
     } catch (error: unknown) {
       setActivationError(errorMessage(error));
@@ -121,6 +136,7 @@ export function ActivationPage({ code, onNavigate }: ActivationPageProps) {
             {valid && !checking ? (
               <form className="activation-form" onSubmit={handleSubmit}>
                 <div className="form-grid">
+                  <label className="form-field activation-email"><span>Email address</span><input required type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} /></label>
                   <label className="form-field"><span>First name</span><input autoComplete="given-name" value={firstName} onChange={(event) => setFirstName(event.target.value)} /></label>
                   <label className="form-field"><span>Last name</span><input autoComplete="family-name" value={lastName} onChange={(event) => setLastName(event.target.value)} /></label>
                   <label className="form-field"><span>Password</span><input required minLength={8} type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} /></label>

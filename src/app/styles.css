@@ -172,6 +172,7 @@ pre { background: hsl(var(--foreground)); border-radius: var(--radius); color: h
 .activation-heading { align-items: center; color: hsl(var(--primary)); display: flex; font-size: 12px; font-weight: 800; gap: 7px; letter-spacing: .08em; text-transform: uppercase; }
 .activation-form { display: grid; gap: 12px; }
 .activation-form .form-grid { gap: 10px; }
+.activation-email { grid-column: 1 / -1; }
 .activation-hint { color: hsl(var(--muted-foreground)); font-size: 12px; line-height: 1.5; margin: 0; }
 .activation-back { justify-self: center; margin-top: 2px; }
 .activation-success { align-items: center; background: hsl(var(--success-bg)); border-radius: 999px; color: hsl(var(--success-fg)); display: grid; height: 54px; justify-self: start; place-items: center; width: 54px; }
