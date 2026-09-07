@@ -39,7 +39,8 @@ export function AppRouter() {
     return <CallbackPage onNavigate={navigate} />;
   }
 
-  if (path === "/activate") {
+  const isActivationPath = path === "/activate" || /^\/oidc\/activate\/[^/]+\/?$/.test(path);
+  if (isActivationPath) {
     const code = new URLSearchParams(search).get("code") || "";
     return <ActivationPage code={code} onNavigate={navigate} />;
   }
