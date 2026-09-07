@@ -1,0 +1,12 @@
+{
+  "schemaName": "WorkoutSession",
+  "collectionName": "WorkoutSessions",
+  "schemaType": 1,
+  "fields": [
+    { "name": "title", "type": "String", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "User-facing workout session title" },
+    { "name": "workoutDate", "type": "DateTime", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "When the workout took place" },
+    { "name": "notes", "type": "String", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "Optional notes about the session" },
+    { "name": "durationMinutes", "type": "Int", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "Total session duration in minutes" },
+    { "name": "status", "type": "String", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "draft or completed" }
+  ]
+}

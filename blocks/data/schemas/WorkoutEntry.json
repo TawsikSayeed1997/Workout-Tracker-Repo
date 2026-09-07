@@ -1,0 +1,12 @@
+{
+  "schemaName": "WorkoutEntry",
+  "collectionName": "WorkoutEntries",
+  "schemaType": 1,
+  "fields": [
+    { "name": "sessionId", "type": "String", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "Parent WorkoutSession item id" },
+    { "name": "exerciseId", "type": "String", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "Stable catalog id for the movement" },
+    { "name": "exerciseName", "type": "String", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "Snapshot of the movement name" },
+    { "name": "measurementMode", "type": "String", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "weighted, bodyweight, or timed" },
+    { "name": "position", "type": "Int", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "Order within the workout" }
+  ]
+}

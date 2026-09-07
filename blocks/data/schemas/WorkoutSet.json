@@ -1,0 +1,14 @@
+{
+  "schemaName": "WorkoutSet",
+  "collectionName": "WorkoutSets",
+  "schemaType": 1,
+  "fields": [
+    { "name": "entryId", "type": "String", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "Parent WorkoutEntry item id" },
+    { "name": "setNumber", "type": "Int", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "One-based set number" },
+    { "name": "reps", "type": "Int", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "Repetitions for rep-based movements" },
+    { "name": "weight", "type": "Float", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "Load in the selected unit for weighted movements" },
+    { "name": "weightUnit", "type": "String", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "kg or lb" },
+    { "name": "minutes", "type": "Int", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "Duration in minutes for timed movements" },
+    { "name": "completed", "type": "Boolean", "isArray": false, "isPIIData": false, "isUniqueData": false, "description": "Whether the set was completed" }
+  ]
+}
