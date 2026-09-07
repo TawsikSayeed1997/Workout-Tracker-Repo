@@ -1,6 +1,8 @@
 export const defaultDictionary = {
   "app.name": "Motion log",
-  "nav.workout": "Workout",
+  "nav.dashboard": "Dashboard",
+  "nav.workouts": "Saved workouts",
+  "nav.addWorkout": "Add workout",
   "nav.profile": "Profile",
   "nav.logout": "Log out",
   "auth.welcome": "Welcome back",

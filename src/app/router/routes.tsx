@@ -7,13 +7,9 @@ import { ErrorPage } from "../../features/auth/ErrorPage";
 import { LoginPage } from "../../features/auth/LoginPage";
 import { NotFoundPage } from "../../features/auth/NotFoundPage";
 import { ProfilePage } from "../../features/profile/ProfilePage";
+import { DashboardPage } from "../../features/dashboard/DashboardPage";
+import { SavedWorkoutsPage } from "../../features/workouts/SavedWorkoutsPage";
 import { WorkoutPage } from "../../features/workouts/WorkoutPage";
-
-const protectedRoutes = {
-  "/": WorkoutPage,
-  "/profile": ProfilePage,
-  "/error": ErrorPage
-};
 
 export function AppRouter() {
   const [path, setPath] = useState(() => window.location.pathname);
@@ -55,15 +51,18 @@ export function AppRouter() {
     );
   }
 
-  const Page = protectedRoutes[path as keyof typeof protectedRoutes];
-  if (!Page) {
+  if (!["/", "/workouts", "/add-workout", "/profile", "/error"].includes(path)) {
     return <NotFoundPage onNavigate={navigate} />;
   }
 
   return (
     <RequireAuth currentPath={path} onNavigate={navigate}>
       <AppShell activePath={path} onNavigate={navigate}>
-        <Page />
+        {path === "/" ? <DashboardPage onNavigate={navigate} /> : null}
+        {path === "/workouts" ? <SavedWorkoutsPage onNavigate={navigate} /> : null}
+        {path === "/add-workout" ? <WorkoutPage onNavigate={navigate} /> : null}
+        {path === "/profile" ? <ProfilePage /> : null}
+        {path === "/error" ? <ErrorPage /> : null}
       </AppShell>
     </RequireAuth>
   );

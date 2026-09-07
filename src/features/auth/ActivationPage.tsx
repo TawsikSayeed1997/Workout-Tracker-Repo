@@ -1,8 +1,9 @@
-import { Activity, CheckCircle2, KeyRound } from "lucide-react";
+import { CheckCircle2, KeyRound } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { blocksClient } from "../../lib/blocks/client";
 import { useT } from "../../lib/i18n/LocalizationProvider";
 import { Alert } from "../../shared/ui/Alert";
+import { LogoMark } from "../../shared/ui/LogoMark";
 
 type ActivationPageProps = {
   code: string;
@@ -119,7 +120,7 @@ export function ActivationPage({ code, onNavigate }: ActivationPageProps) {
   return (
     <div className="auth-screen">
       <div className="auth-card activation-card">
-        <div className="auth-brand"><span className="brand-mark"><Activity size={18} /></span><span>{t("app.name")}</span></div>
+        <div className="auth-brand"><LogoMark /><span>{t("app.name")}</span></div>
         {activated ? (
           <>
             <div className="activation-success"><CheckCircle2 size={30} /></div>

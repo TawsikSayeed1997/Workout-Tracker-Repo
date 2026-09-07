@@ -1,9 +1,10 @@
-import { Activity, LogIn } from "lucide-react";
+import { LogIn } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../../app/providers/AuthProvider";
 import { isLoginConfigured } from "../../lib/blocks/config";
 import { useT } from "../../lib/i18n/LocalizationProvider";
 import { Alert } from "../../shared/ui/Alert";
+import { LogoMark } from "../../shared/ui/LogoMark";
 
 export function LoginPage({ returnTo }: { returnTo?: string }) {
   const { login } = useAuth();
@@ -26,7 +27,7 @@ export function LoginPage({ returnTo }: { returnTo?: string }) {
   return (
     <div className="auth-screen">
       <div className="auth-card">
-        <div className="auth-brand"><span className="brand-mark"><Activity size={18} /></span><span>{t("app.name")}</span></div>
+        <div className="auth-brand"><LogoMark /><span>{t("app.name")}</span></div>
         <h2>{t("auth.welcome")}</h2>
         <p>{t("auth.subtitle")}</p>
         {!configured ? (

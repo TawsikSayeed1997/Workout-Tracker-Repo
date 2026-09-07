@@ -1,4 +1,4 @@
-import { Activity, PanelLeft } from "lucide-react";
+import { PanelLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -6,6 +6,7 @@ import { navItems } from "./navItems";
 import { NotificationsMenu } from "./NotificationsMenu";
 import { UserMenu } from "./UserMenu";
 import { useT } from "../../lib/i18n/LocalizationProvider";
+import { LogoMark } from "../../shared/ui/LogoMark";
 
 const COLLAPSED_KEY = "blocks-app:sidebar-collapsed";
 const MOBILE_QUERY = "(max-width: 880px)";
@@ -43,7 +44,7 @@ export function AppShell({ activePath, children, onNavigate }: { activePath: str
         <div className="sidebar-header">
           {collapsed ? null : (
             <a className="brand" href="/" onClick={(event) => { event.preventDefault(); onNavigate("/"); }}>
-              <span className="brand-mark"><Activity size={16} /></span>
+              <LogoMark />
               <span>Motion log</span>
             </a>
           )}

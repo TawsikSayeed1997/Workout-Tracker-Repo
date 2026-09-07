@@ -65,7 +65,7 @@ function formatMode(mode: MeasurementMode) {
   return mode === "weighted" ? "Weighted" : mode === "timed" ? "Timed" : "Bodyweight";
 }
 
-export function WorkoutPage() {
+export function WorkoutPage({ onNavigate }: { onNavigate?: (path: string) => void }) {
   const [session, setSession] = useState<SessionDraft>(readSession);
   const [saved, setSaved] = useState(false);
   const [search, setSearch] = useState("");
@@ -191,7 +191,7 @@ export function WorkoutPage() {
             </label>
           </div>
           {saveError ? <div className="alert alert-error save-alert">{saveError}</div> : null}
-          {savedId ? <div className="alert alert-info save-alert">Saved to Blocks. Session id: <code>{savedId}</code></div> : null}
+          {savedId ? <div className="alert alert-info save-alert">Saved to Blocks. Session id: <code>{savedId}</code>{onNavigate ? <button className="link-button save-link" type="button" onClick={() => onNavigate("/workouts")}>View saved workouts</button> : null}</div> : null}
           <button className="primary-button save-session" disabled={isSaving} type="submit"><Check size={17} /> {isSaving ? "Saving…" : saved ? "Session saved" : "Save session"}</button>
         </form>
 
