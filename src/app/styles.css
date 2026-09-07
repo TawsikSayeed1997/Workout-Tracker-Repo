@@ -168,6 +168,13 @@ pre { background: hsl(var(--foreground)); border-radius: var(--radius); color: h
 .auth-card h2 { font-size: 22px; margin: 0; }
 .auth-card > p { color: hsl(var(--muted-foreground)); margin: 0; }
 .auth-submit { justify-content: center; width: 100%; }
+.activation-card { max-width: 480px; }
+.activation-heading { align-items: center; color: hsl(var(--primary)); display: flex; font-size: 12px; font-weight: 800; gap: 7px; letter-spacing: .08em; text-transform: uppercase; }
+.activation-form { display: grid; gap: 12px; }
+.activation-form .form-grid { gap: 10px; }
+.activation-hint { color: hsl(var(--muted-foreground)); font-size: 12px; line-height: 1.5; margin: 0; }
+.activation-back { justify-self: center; margin-top: 2px; }
+.activation-success { align-items: center; background: hsl(var(--success-bg)); border-radius: 999px; color: hsl(var(--success-fg)); display: grid; height: 54px; justify-self: start; place-items: center; width: 54px; }
 
 /* Alerts */
 .alert { border-radius: 8px; font-size: 13px; line-height: 1.5; padding: 12px 14px; }

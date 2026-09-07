@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AppShell } from "../layout/AppShell";
 import { RedirectIfAuthenticated, RequireAuth } from "./guards";
 import { CallbackPage } from "../../features/auth/CallbackPage";
+import { ActivationPage } from "../../features/auth/ActivationPage";
 import { ErrorPage } from "../../features/auth/ErrorPage";
 import { LoginPage } from "../../features/auth/LoginPage";
 import { NotFoundPage } from "../../features/auth/NotFoundPage";
@@ -36,6 +37,11 @@ export function AppRouter() {
 
   if (path === "/login/callback") {
     return <CallbackPage onNavigate={navigate} />;
+  }
+
+  if (path === "/activate") {
+    const code = new URLSearchParams(search).get("code") || "";
+    return <ActivationPage code={code} onNavigate={navigate} />;
   }
 
   if (path === "/login") {
