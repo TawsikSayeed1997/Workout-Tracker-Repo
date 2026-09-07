@@ -23,7 +23,7 @@ export type WorkoutToSave = {
   entries: PersistableEntry[];
 };
 
-type BlocksMutationResponse = { itemId?: string; data?: { itemId?: string; acknowledged?: boolean } };
+type BlocksMutationResponse = Record<string, unknown>;
 
 const sessions = blocksClient.data.collection("WorkoutSession");
 const entries = blocksClient.data.collection("WorkoutEntry");
@@ -71,6 +71,25 @@ export async function saveWorkout(workout: WorkoutToSave) {
 }
 
 function mutationItemId(response: BlocksMutationResponse): string | undefined {
-  const candidate = response.itemId ?? response.data?.itemId;
-  return typeof candidate === "string" && candidate ? candidate : undefined;
+  const visited = new Set<object>();
+
+  function find(value: unknown): string | undefined {
+    if (!value || typeof value !== "object") return undefined;
+    const object = value as Record<string, unknown>;
+    if (visited.has(object)) return undefined;
+    visited.add(object);
+
+    for (const key of ["itemId", "ItemId"]) {
+      const candidate = object[key];
+      if (typeof candidate === "string" && candidate.trim()) return candidate.trim();
+    }
+
+    for (const nested of Object.values(object)) {
+      const itemId = find(nested);
+      if (itemId) return itemId;
+    }
+    return undefined;
+  }
+
+  return find(response);
 }
