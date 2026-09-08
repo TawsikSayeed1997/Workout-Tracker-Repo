@@ -18,6 +18,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { modeLabel, type Exercise, type MeasurementMode, workoutCatalog, categoryOptions } from "./workoutCatalog";
+import { MuscleMap } from "./MuscleMap";
 import { saveWorkout } from "./workoutsApi";
 
 type WorkoutSet = {
@@ -74,6 +75,7 @@ export function WorkoutPage({ onNavigate }: { onNavigate?: (path: string) => voi
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [savedId, setSavedId] = useState("");
+  const [previewExercise, setPreviewExercise] = useState<Exercise>();
 
   useEffect(() => {
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
@@ -88,6 +90,10 @@ export function WorkoutPage({ onNavigate }: { onNavigate?: (path: string) => voi
     });
   }, [category, search]);
 
+  useEffect(() => {
+    setPreviewExercise((current) => current && filteredCatalog.some((exercise) => exercise.id === current.id) ? current : filteredCatalog[0]);
+  }, [filteredCatalog]);
+
   const totalSets = session.entries.reduce((total, entry) => total + entry.sets.length, 0);
   const completedSets = session.entries.reduce((total, entry) => total + entry.sets.filter((set) => set.completed).length, 0);
   const totalMinutes = session.entries.reduce((total, entry) => total + entry.sets.reduce((entryTotal, set) => entryTotal + Number(set.minutes || 0), 0), 0);
@@ -95,6 +101,7 @@ export function WorkoutPage({ onNavigate }: { onNavigate?: (path: string) => voi
 
   function addExercise(exercise: Exercise) {
     if (session.entries.some((entry) => entry.id === exercise.id)) return;
+    setPreviewExercise(exercise);
     setSession((current) => ({ ...current, entries: [...current.entries, { ...exercise, sets: [newSet(), newSet(), newSet()] }] }));
   }
 
@@ -203,6 +210,7 @@ export function WorkoutPage({ onNavigate }: { onNavigate?: (path: string) => voi
             </div>
             <span className="library-count">{filteredCatalog.length} options</span>
           </div>
+          <MuscleMap exercise={previewExercise} />
           <div className="search-box library-search"><Search size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search movements or sports" /></div>
           <div className="category-row">
             {categoryOptions.map((option) => <button key={option} className={category === option ? "category-pill active" : "category-pill"} onClick={() => setCategory(option)} type="button">{option}</button>)}
@@ -210,7 +218,7 @@ export function WorkoutPage({ onNavigate }: { onNavigate?: (path: string) => voi
           <div className="library-list">
             {(showAll ? filteredCatalog : filteredCatalog.slice(0, 9)).map((exercise) => {
               const selected = session.entries.some((entry) => entry.id === exercise.id);
-              return <button className={selected ? "movement-card selected" : "movement-card"} key={exercise.id} onClick={() => addExercise(exercise)} type="button">
+              return <button className={selected ? "movement-card selected" : "movement-card"} key={exercise.id} onClick={() => addExercise(exercise)} onFocus={() => setPreviewExercise(exercise)} onMouseEnter={() => setPreviewExercise(exercise)} type="button">
                 <span className={`movement-icon ${exercise.mode}`}><ModeIcon mode={exercise.mode} /></span>
                 <span className="movement-copy"><strong>{exercise.name}</strong><small>{exercise.detail}</small></span>
                 <span className="movement-action">{selected ? <Check size={16} /> : <Plus size={17} />}</span>
