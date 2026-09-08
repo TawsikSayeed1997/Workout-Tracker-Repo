@@ -20,6 +20,15 @@ const LANGUAGE_KEY = "blocks-app:language";
 // through Blocks Localization without separate per-screen setup.
 const MODULES = ["common"];
 
+function isUsableTranslation(value: unknown): value is string {
+  if (typeof value !== "string" || !value.trim()) return false;
+  const normalized = value.trim().toLowerCase();
+  // Localization returns this marker for keys that exist in the module but
+  // are not translated for the selected language. It must never replace the
+  // app's local fallback copy.
+  return normalized !== "[key missing]" && normalized !== "key missing";
+}
+
 function normalizeLanguage(raw: Record<string, unknown>): LocalizationLanguage {
   const code = raw.languageCode ?? raw.code ?? raw.culture ?? "en";
   const name = raw.languageName ?? raw.displayName ?? raw.name ?? String(code);
@@ -63,6 +72,7 @@ export function LocalizationProvider({ children }: { children: ReactNode }) {
     moduleQueries.forEach((query, index) => {
       const moduleName = MODULES[index];
       for (const [key, value] of Object.entries(query.data ?? {})) {
+        if (!isUsableTranslation(value)) continue;
         if (moduleName === "common") {
           // Keep both forms so a common translation can be addressed as
           // `save` (the Blocks seed convention) or `common.save` (the app
