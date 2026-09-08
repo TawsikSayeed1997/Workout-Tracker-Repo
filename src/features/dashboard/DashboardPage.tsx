@@ -5,10 +5,12 @@ import { ActionButton } from "../../shared/ui/ActionButton";
 import { EmptyState } from "../../shared/ui/EmptyState";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { Skeleton } from "../../shared/ui/Skeleton";
+import { useT } from "../../lib/i18n/LocalizationProvider";
 
 type DashboardPageProps = { onNavigate: (path: string) => void };
 
 export function DashboardPage({ onNavigate }: DashboardPageProps) {
+  const { t } = useT();
   const [analytics, setAnalytics] = useState<WorkoutAnalytics>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -19,11 +21,11 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     try {
       setAnalytics(await getWorkoutAnalytics());
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Could not load your workout dashboard.");
+      setError(caught instanceof Error ? caught.message : t("common.error"));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => { void load(); }, [load]);
 
@@ -38,41 +40,41 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     <section className="dashboard-page">
       <div className="page-header dashboard-header">
         <div>
-          <span className="eyebrow"><Activity size={15} /> YOUR TRAINING SPACE</span>
-          <h1>Train with intention.</h1>
-          <p>A clear view of the work you have put in, and the next session waiting for you.</p>
+          <span className="eyebrow"><Activity size={15} /> {t("dashboard.eyebrow")}</span>
+          <h1>{t("dashboard.title")}</h1>
+          <p>{t("dashboard.subtitle")}</p>
         </div>
-        <ActionButton icon={<Plus size={17} />} onClick={() => onNavigate("/add-workout")}>Add workout</ActionButton>
+        <ActionButton icon={<Plus size={17} />} onClick={() => onNavigate("/add-workout")}>{t("dashboard.addWorkout")}</ActionButton>
       </div>
 
       <div className="metrics dashboard-metrics">
-        <DashboardMetric icon={<Dumbbell size={17} />} label="Workouts" value={String(data.workouts.length)} note="all time" />
-        <DashboardMetric icon={<BarChart3 size={17} />} label="Total volume" value={`${formatNumber(data.totalVolume)} kg`} note="weighted work" />
-        <DashboardMetric icon={<Clock3 size={17} />} label="Active time" value={`${formatNumber(data.totalMinutes)} min`} note="logged duration" />
-        <DashboardMetric icon={<ListChecks size={17} />} label="Sets completed" value={String(data.completedSets)} note={`${data.totalSets} sets logged`} />
+        <DashboardMetric icon={<Dumbbell size={17} />} label={t("dashboard.workouts")} value={String(data.workouts.length)} note={t("dashboard.allTime")} />
+        <DashboardMetric icon={<BarChart3 size={17} />} label={t("dashboard.totalVolume")} value={`${formatNumber(data.totalVolume)} kg`} note={t("dashboard.weightedWork")} />
+        <DashboardMetric icon={<Clock3 size={17} />} label={t("dashboard.activeTime")} value={`${formatNumber(data.totalMinutes)} min`} note={t("dashboard.loggedDuration")} />
+        <DashboardMetric icon={<ListChecks size={17} />} label={t("dashboard.setsCompleted")} value={String(data.completedSets)} note={`${data.totalSets} ${t("dashboard.setsLogged")}`} />
       </div>
 
       <div className="dashboard-grid">
         <div className="panel chart-panel">
           <div className="panel-heading-row">
-            <div><span className="section-kicker">PROGRESS OVER TIME</span><h2>Training load</h2></div>
-            <span className="chart-legend"><i /> Volume (kg)</span>
+            <div><span className="section-kicker">{t("dashboard.progress")}</span><h2>{t("dashboard.trainingLoad")}</h2></div>
+            <span className="chart-legend"><i /> {t("dashboard.volume")}</span>
           </div>
-          {data.workouts.length ? <VolumeChart workouts={data.workouts} /> : <EmptyState icon={<BarChart3 size={26} />} title="Your chart starts here" description="Save your first workout to see your training volume build over time." action={<ActionButton icon={<Plus size={15} />} onClick={() => onNavigate("/add-workout")}>Add workout</ActionButton>} />}
+          {data.workouts.length ? <VolumeChart workouts={data.workouts} /> : <EmptyState icon={<BarChart3 size={26} />} title={t("dashboard.noChartTitle")} description={t("dashboard.noChartDescription")} action={<ActionButton icon={<Plus size={15} />} onClick={() => onNavigate("/add-workout")}>{t("dashboard.addWorkout")}</ActionButton>} />}
         </div>
 
         <div className="panel focus-panel">
-          <div className="panel-heading-row"><div><span className="section-kicker">THIS WEEK</span><h2>Your rhythm</h2></div><Timer size={18} className="panel-heading-icon" /></div>
-          <ProgressRow icon={<Clock3 size={16} />} label="Active minutes" value={weekMinutes} target={150} suffix="min" />
-          <ProgressRow icon={<Dumbbell size={16} />} label="Sessions" value={data.workouts.filter((workout) => isWithinDays(workout.workoutDate, 7)).length} target={4} suffix="workouts" />
-          <ProgressRow icon={<CheckCircle2 size={16} />} label="Completed sets" value={data.workouts.filter((workout) => isWithinDays(workout.workoutDate, 7)).reduce((total, workout) => total + workout.completedSetCount, 0)} target={20} suffix="sets" />
-          <p className="panel-footnote">Targets are gentle guides. Consistency beats perfection.</p>
+          <div className="panel-heading-row"><div><span className="section-kicker">{t("dashboard.thisWeek")}</span><h2>{t("dashboard.rhythm")}</h2></div><Timer size={18} className="panel-heading-icon" /></div>
+          <ProgressRow icon={<Clock3 size={16} />} label={t("dashboard.activeMinutes")} value={weekMinutes} target={150} suffix={t("dashboard.targetMinutes")} />
+          <ProgressRow icon={<Dumbbell size={16} />} label={t("dashboard.sessions")} value={data.workouts.filter((workout) => isWithinDays(workout.workoutDate, 7)).length} target={4} suffix={t("dashboard.targetWorkouts")} />
+          <ProgressRow icon={<CheckCircle2 size={16} />} label={t("dashboard.setsCompleted")} value={data.workouts.filter((workout) => isWithinDays(workout.workoutDate, 7)).reduce((total, workout) => total + workout.completedSetCount, 0)} target={20} suffix={t("dashboard.targetSets")} />
+          <p className="panel-footnote">{t("dashboard.targetsNote")}</p>
         </div>
       </div>
 
       <div className="panel recent-panel">
-        <div className="panel-heading-row"><div><span className="section-kicker">RECENT ACTIVITY</span><h2>Latest workouts</h2></div><button className="link-button inline-link" onClick={() => onNavigate("/workouts")}>View all <ArrowUpRight size={15} /></button></div>
-        {latest ? <div className="recent-list">{data.workouts.slice(0, 4).map((workout) => <RecentWorkout key={workout.id} workout={workout} />)}</div> : <EmptyState icon={<CalendarDays size={26} />} title="No workouts saved yet" description="Start a session and your recent activity will appear here." action={<ActionButton icon={<Plus size={15} />} onClick={() => onNavigate("/add-workout")}>Add workout</ActionButton>} />}
+        <div className="panel-heading-row"><div><span className="section-kicker">{t("dashboard.recentActivity")}</span><h2>{t("dashboard.latestWorkouts")}</h2></div><button className="link-button inline-link" onClick={() => onNavigate("/workouts")}>{t("dashboard.viewAll")} <ArrowUpRight size={15} /></button></div>
+        {latest ? <div className="recent-list">{data.workouts.slice(0, 4).map((workout) => <RecentWorkout key={workout.id} workout={workout} />)}</div> : <EmptyState icon={<CalendarDays size={26} />} title={t("dashboard.noWorkoutsTitle")} description={t("dashboard.noWorkoutsDescription")} action={<ActionButton icon={<Plus size={15} />} onClick={() => onNavigate("/add-workout")}>{t("dashboard.addWorkout")}</ActionButton>} />}
       </div>
     </section>
   );
@@ -83,6 +85,7 @@ function DashboardMetric({ icon, label, value, note }: { icon: React.ReactNode; 
 }
 
 function VolumeChart({ workouts }: { workouts: WorkoutHistoryItem[] }) {
+  const { t } = useT();
   const points = workouts.slice(0, 7).reverse();
   const max = Math.max(...points.map((workout) => workout.volume), 1);
   const width = 720;
@@ -96,11 +99,11 @@ function VolumeChart({ workouts }: { workouts: WorkoutHistoryItem[] }) {
   }));
   const line = coordinates.map((point) => `${point.x},${point.y}`).join(" ");
 
-  return <div className="volume-chart"><svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Workout volume by session">
+  return <div className="volume-chart"><svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={t("dashboard.chartAria")}>
     {[0, 1, 2, 3].map((step) => { const y = top + (chartHeight * step) / 3; return <line key={step} x1="30" x2="690" y1={y} y2={y} className="chart-grid-line" />; })}
     <polyline points={line} className="chart-line" />
     {coordinates.map((point, index) => <g key={points[index]?.id}><circle cx={point.x} cy={point.y} r="5" className="chart-dot" /><text x={point.x} y={height - 14} textAnchor="middle" className="chart-label">{formatChartDate(points[index]?.workoutDate ?? "")}</text></g>)}
-  </svg><div className="chart-summary"><span><strong>{formatNumber(Math.max(...points.map((workout) => workout.volume), 0))} kg</strong> peak session</span><span>Last {points.length} workout{points.length === 1 ? "" : "s"}</span></div></div>;
+  </svg><div className="chart-summary"><span><strong>{formatNumber(Math.max(...points.map((workout) => workout.volume), 0))} kg</strong> {t("dashboard.peakSession")}</span><span>{points.length === 1 ? t("dashboard.lastWorkout") : t("dashboard.lastWorkouts").replace("{count}", String(points.length))}</span></div></div>;
 }
 
 function ProgressRow({ icon, label, value, target, suffix }: { icon: React.ReactNode; label: string; value: number; target: number; suffix: string }) {
@@ -109,7 +112,8 @@ function ProgressRow({ icon, label, value, target, suffix }: { icon: React.React
 }
 
 function RecentWorkout({ workout }: { workout: WorkoutHistoryItem }) {
-  return <div className="recent-item"><span className="recent-icon"><Dumbbell size={17} /></span><div className="recent-copy"><strong>{workout.title}</strong><span>{formatDate(workout.workoutDate)} · {workout.exerciseCount} movement{workout.exerciseCount === 1 ? "" : "s"}</span></div><div className="recent-result"><strong>{workout.volume ? `${formatNumber(workout.volume)} kg` : `${workout.durationMinutes} min`}</strong><span>{workout.setCount} sets</span></div></div>;
+  const { t } = useT();
+  return <div className="recent-item"><span className="recent-icon"><Dumbbell size={17} /></span><div className="recent-copy"><strong>{workout.title}</strong><span>{formatDate(workout.workoutDate, t("common.dateUnavailable"))} · {workout.exerciseCount} {workout.exerciseCount === 1 ? t("common.movement") : t("common.movements")}</span></div><div className="recent-result"><strong>{workout.volume ? `${formatNumber(workout.volume)} kg` : `${workout.durationMinutes} min`}</strong><span>{workout.setCount} {t("common.sets")}</span></div></div>;
 }
 
 function DashboardSkeleton() {
@@ -117,6 +121,6 @@ function DashboardSkeleton() {
 }
 
 function formatNumber(value: number) { return Math.round(value).toLocaleString(); }
-function formatDate(value: string) { const date = new Date(value); return Number.isNaN(date.getTime()) ? "Date unavailable" : date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }); }
+function formatDate(value: string, unavailable: string) { const date = new Date(value); return Number.isNaN(date.getTime()) ? unavailable : date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }); }
 function formatChartDate(value: string) { const date = new Date(value); return Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString(undefined, { month: "short", day: "numeric" }); }
 function isWithinDays(value: string, days: number) { const timestamp = Date.parse(value); return Number.isFinite(timestamp) && Date.now() - timestamp <= days * 86400000 && timestamp <= Date.now(); }

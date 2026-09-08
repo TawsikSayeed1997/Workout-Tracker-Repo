@@ -11,13 +11,13 @@ type LocalizationValue = {
   language: string;
   languages: LocalizationLanguage[];
   setLanguage: (language: string) => void;
-  t: (key: TranslationKey, fallback?: string) => string;
+  t: (key: string, fallback?: string) => string;
 };
 
 const LocalizationContext = createContext<LocalizationValue | undefined>(undefined);
 const LANGUAGE_KEY = "blocks-app:language";
-// One module per screen would keep the initial payload small, but this
-// starter only ships Profile -- add module names here as you add pages.
+// Keep the shared UI in one module so tenants can translate the whole app
+// through Blocks Localization without separate per-screen setup.
 const MODULES = ["common"];
 
 function normalizeLanguage(raw: Record<string, unknown>): LocalizationLanguage {
@@ -63,8 +63,15 @@ export function LocalizationProvider({ children }: { children: ReactNode }) {
     moduleQueries.forEach((query, index) => {
       const moduleName = MODULES[index];
       for (const [key, value] of Object.entries(query.data ?? {})) {
-        const appKey = moduleName === "common" && key in defaultDictionary ? key : `${moduleName}.${key}`;
-        merged[appKey] = value;
+        if (moduleName === "common") {
+          // Keep both forms so a common translation can be addressed as
+          // `save` (the Blocks seed convention) or `common.save` (the app
+          // convention), including dynamic exercise keys.
+          merged[key] = value;
+          merged[`common.${key}`] = value;
+        } else {
+          merged[`${moduleName}.${key}`] = value;
+        }
       }
     });
     return merged;
@@ -75,7 +82,7 @@ export function LocalizationProvider({ children }: { children: ReactNode }) {
     language,
     languages,
     setLanguage,
-    t: (key, fallback) => cloudDictionary[key] ?? defaultDictionary[key] ?? fallback ?? key
+    t: (key, fallback) => cloudDictionary[key] ?? defaultDictionary[key as TranslationKey] ?? fallback ?? key
   }), [cloudDictionary, language, languages]);
 
   return <LocalizationContext.Provider value={value}>{children}</LocalizationContext.Provider>;

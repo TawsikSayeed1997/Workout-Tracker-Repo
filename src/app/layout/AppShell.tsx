@@ -45,13 +45,13 @@ export function AppShell({ activePath, children, onNavigate }: { activePath: str
           {collapsed ? null : (
             <a className="brand" href="/" onClick={(event) => { event.preventDefault(); onNavigate("/"); }}>
               <LogoMark />
-              <span>Motion log</span>
+              <span>{t("app.name")}</span>
             </a>
           )}
           {/* Hidden on mobile by CSS (nothing to toggle -- the rail is always
              collapsed there); on desktop it's the only control that can
              re-expand the sidebar, so it must never be the thing collapsing hides. */}
-          <button className="icon-button sidebar-collapse-toggle" onClick={() => setCollapsedPref((value) => !value)} aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
+          <button className="icon-button sidebar-collapse-toggle" onClick={() => setCollapsedPref((value) => !value)} aria-label={collapsed ? t("nav.expand") : t("nav.collapse")}>
             <PanelLeft size={16} />
           </button>
         </div>

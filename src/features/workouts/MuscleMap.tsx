@@ -1,21 +1,23 @@
 import { Activity, Info } from "lucide-react";
 import type { Exercise, MuscleIntensity, MuscleKey } from "./workoutCatalog";
 import { muscleLabels } from "./workoutCatalog";
+import { useT } from "../../lib/i18n/LocalizationProvider";
 
 export function MuscleMap({ exercise }: { exercise?: Exercise }) {
+  const { t } = useT();
   const targets = exercise?.muscles ?? {};
   const targetEntries = (Object.entries(targets) as [MuscleKey, MuscleIntensity][]).sort(([, a], [, b]) => a === "primary" ? -1 : b === "primary" ? 1 : 0);
   return <div className="muscle-map">
-    <div className="muscle-map-heading"><div><span className="section-kicker">MUSCLE FOCUS</span><h3>{exercise?.name ?? "Choose a movement"}</h3></div><Activity size={17} className="panel-heading-icon" /></div>
-    <div className="muscle-map-body"><BodyFigure targets={targets} label="Front" /><BodyFigure targets={targets} label="Back" back /></div>
-    <div className="muscle-legend"><span><i className="legend-primary" /> Main target</span><span><i className="legend-secondary" /> Supporting</span></div>
-    {targetEntries.length ? <div className="muscle-tags">{targetEntries.map(([key, intensity]) => <span className={intensity === "primary" ? "muscle-tag primary" : "muscle-tag"} key={key}>{muscleLabels[key]}</span>)}</div> : <p className="muscle-map-hint"><Info size={14} /> Hover over a movement to preview its target muscles.</p>}
+    <div className="muscle-map-heading"><div><span className="section-kicker">{t("workout.muscleFocus")}</span><h3>{exercise?.name ?? t("workout.chooseMovementShort")}</h3></div><Activity size={17} className="panel-heading-icon" /></div>
+    <div className="muscle-map-body"><BodyFigure targets={targets} label={t("workout.front")} t={t} /><BodyFigure targets={targets} label={t("workout.back")} t={t} back /></div>
+    <div className="muscle-legend"><span><i className="legend-primary" /> {t("workout.mainTarget")}</span><span><i className="legend-secondary" /> {t("workout.supporting")}</span></div>
+    {targetEntries.length ? <div className="muscle-tags">{targetEntries.map(([key, intensity]) => <span className={intensity === "primary" ? "muscle-tag primary" : "muscle-tag"} key={key}>{t(`muscle.${key}`, muscleLabels[key])}</span>)}</div> : <p className="muscle-map-hint"><Info size={14} /> {t("workout.mapHint")}</p>}
   </div>;
 }
 
-function BodyFigure({ targets, label, back = false }: { targets: Partial<Record<MuscleKey, MuscleIntensity>>; label: string; back?: boolean }) {
+function BodyFigure({ targets, label, t, back = false }: { targets: Partial<Record<MuscleKey, MuscleIntensity>>; label: string; t: (key: string, fallback?: string) => string; back?: boolean }) {
   const fill = (key: MuscleKey) => ({ fill: muscleColor(targets[key]) });
-  return <div className="body-figure"><svg viewBox="0 0 110 220" role="img" aria-label={`${label} body muscle map`}>
+  return <div className="body-figure"><svg viewBox="0 0 110 220" role="img" aria-label={t("workout.mapAria").replace("{label}", label)}>
     <circle cx="55" cy="16" r="12" className="body-base" />
     <path d="M47 28h16l4 13 8 5-5 35-8 4 5 42-7 5-5-43-5 43-7-5 5-42-8-4-5-35 8-5 4-13Z" className="body-base" />
     <path d="M40 45 27 48l-10 35 8 3 14-25Z" className="body-base" />

@@ -25,7 +25,7 @@ export function ProfilePage() {
       <PageHeader
         title={t("profile.title")}
         subtitle={t("profile.subtitle")}
-        actions={<ActionButton variant="icon" onClick={() => me.refetch()} title="Refresh profile" icon={<RefreshCw size={18} />} />}
+        actions={<ActionButton variant="icon" onClick={() => me.refetch()} title={t("profile.refresh")} icon={<RefreshCw size={18} />} />}
       />
 
       {me.isLoading ? (
@@ -40,41 +40,41 @@ export function ProfilePage() {
         <div className="profile-card">
           <span className="avatar avatar-lg">{userInitials(profile)}</span>
           <div className="profile-heading">
-            <h3>{name || (me.isError ? "Session unavailable" : "Unknown user")}</h3>
+            <h3>{name || (me.isError ? t("profile.sessionUnavailable") : t("profile.unknownUser"))}</h3>
             {profile?.email ? <span className="muted"><Mail size={14} /> {profile.email}</span> : null}
             <StatusPill tone={me.isSuccess ? "good" : "warn"}>
-              {me.isSuccess ? "Authenticated" : "Session unavailable"}
+              {me.isSuccess ? t("profile.authenticated") : t("profile.sessionUnavailable")}
             </StatusPill>
           </div>
         </div>
       )}
 
       <div className="grid">
-        <DetailCard icon={<UserRound size={16} />} label="User ID" loading={me.isLoading} value={profile?.itemId} />
-        <DetailCard icon={<ShieldCheck size={16} />} label="Tenant id (x-blocks-key)" value={blocksConfig.xBlocksKey} />
-        <DetailCard icon={<Clock size={16} />} label="Session expires" value={expiresAt?.toLocaleString()} />
+        <DetailCard icon={<UserRound size={16} />} label={t("profile.userId")} loading={me.isLoading} value={profile?.itemId} />
+        <DetailCard icon={<ShieldCheck size={16} />} label={t("profile.tenantId")} value={blocksConfig.xBlocksKey} />
+        <DetailCard icon={<Clock size={16} />} label={t("profile.sessionExpires")} value={expiresAt?.toLocaleString()} />
       </div>
 
       <div className="panel">
-        <div className="panel-title"><ShieldCheck size={16} /><span>Roles</span></div>
-        {me.isLoading ? <Skeleton className="skeleton-line" /> : <ChipList empty="No roles assigned" items={profile?.roles} />}
+        <div className="panel-title"><ShieldCheck size={16} /><span>{t("profile.roles")}</span></div>
+        {me.isLoading ? <Skeleton className="skeleton-line" /> : <ChipList empty={t("common.noRoles")} items={profile?.roles} />}
       </div>
 
       <div className="panel">
-        <div className="panel-title"><ShieldCheck size={16} /><span>Permissions ({profile?.permissions?.length ?? 0})</span></div>
-        {me.isLoading ? <Skeleton className="skeleton-line" /> : <ChipList empty="No permissions returned" items={profile?.permissions} />}
+        <div className="panel-title"><ShieldCheck size={16} /><span>{t("profile.permissions")} ({profile?.permissions?.length ?? 0})</span></div>
+        {me.isLoading ? <Skeleton className="skeleton-line" /> : <ChipList empty={t("common.noPermissions")} items={profile?.permissions} />}
       </div>
 
       <div className="panel">
-        <div className="panel-title"><Clock size={16} /><span>Session</span></div>
+        <div className="panel-title"><Clock size={16} /><span>{t("profile.session")}</span></div>
         <div className="chips">
-          <span className="chip">Signed in {issuedAt ? issuedAt.toLocaleTimeString() : "unknown"}</span>
-          <span className="chip">Expires {expiresAt ? expiresAt.toLocaleTimeString() : "unknown"}</span>
+          <span className="chip">{t("profile.signedIn")} {issuedAt ? issuedAt.toLocaleTimeString() : t("common.unknown")}</span>
+          <span className="chip">{t("profile.expires")} {expiresAt ? expiresAt.toLocaleTimeString() : t("common.unknown")}</span>
         </div>
       </div>
 
       <details className="raw-details">
-        <summary>View raw response</summary>
+        <summary>{t("profile.rawResponse")}</summary>
         <JsonPanel value={profile ?? me.error ?? me.data} />
       </details>
     </section>

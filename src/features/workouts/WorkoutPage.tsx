@@ -20,6 +20,7 @@ import type { FormEvent, ReactNode } from "react";
 import { modeLabel, type Exercise, type MeasurementMode, workoutCatalog, categoryOptions } from "./workoutCatalog";
 import { MuscleMap } from "./MuscleMap";
 import { saveWorkout } from "./workoutsApi";
+import { useT } from "../../lib/i18n/LocalizationProvider";
 
 type WorkoutSet = {
   id: string;
@@ -70,11 +71,12 @@ function readSession(): SessionDraft {
   return newSession();
 }
 
-function formatMode(mode: MeasurementMode) {
-  return mode === "weighted" ? "Weighted" : mode === "timed" ? "Timed" : "Bodyweight";
+function formatMode(mode: MeasurementMode, t: (key: string, fallback?: string) => string) {
+  return mode === "weighted" ? t("mode.weighted") : mode === "timed" ? t("mode.timed") : t("mode.bodyweight");
 }
 
 export function WorkoutPage({ onNavigate }: { onNavigate?: (path: string) => void }) {
+  const { t } = useT();
   const [session, setSession] = useState<SessionDraft>(readSession);
   const [saved, setSaved] = useState(false);
   const [search, setSearch] = useState("");
@@ -150,37 +152,37 @@ export function WorkoutPage({ onNavigate }: { onNavigate?: (path: string) => voi
     <section className="workout-page">
       <div className="workout-hero">
         <div>
-          <div className="eyebrow"><Activity size={15} /> TRAINING LOG</div>
-          <h1>Build a session that <span>moves you forward.</span></h1>
-          <p>Pick your movements, record every set, and keep your progress in one place.</p>
+          <div className="eyebrow"><Activity size={15} /> {t("workout.eyebrow")}</div>
+          <h1>{t("workout.title")} <span>{t("workout.titleAccent")}</span></h1>
+          <p>{t("workout.subtitle")}</p>
         </div>
-        <div className="hero-badge"><Flame size={16} /><span><strong>{completedSets || 0}</strong> sets completed</span></div>
+        <div className="hero-badge"><Flame size={16} /><span><strong>{completedSets || 0}</strong> {t("workout.setsCompleted")}</span></div>
       </div>
 
       <div className="metrics workout-metrics">
-        <Metric icon={<Target size={17} />} label="Movements" value={String(session.entries.length)} note="in this session" />
-        <Metric icon={<Dumbbell size={17} />} label="Volume" value={`${volume.toLocaleString()} kg`} note="weighted work" />
-        <Metric icon={<Timer size={17} />} label="Time tracked" value={`${totalMinutes} min`} note="cardio & holds" />
-        <Metric icon={<Trophy size={17} />} label="Session status" value={completedSets ? "In motion" : "Ready"} note={`${totalSets} sets planned`} />
+        <Metric icon={<Target size={17} />} label={t("workout.movements")} value={String(session.entries.length)} note={t("workout.inSession")} />
+        <Metric icon={<Dumbbell size={17} />} label={t("workout.volume")} value={`${volume.toLocaleString()} kg`} note={t("dashboard.weightedWork")} />
+        <Metric icon={<Timer size={17} />} label={t("workout.timeTracked")} value={`${totalMinutes} min`} note={t("workout.cardioHold")} />
+        <Metric icon={<Trophy size={17} />} label={t("workout.sessionStatus")} value={completedSets ? t("workout.inMotion") : t("workout.ready")} note={`${totalSets} ${t("workout.setsPlanned")}`} />
       </div>
 
       <div className="workout-layout">
         <form className="session-column" onSubmit={saveSession}>
           <div className="section-heading">
             <div>
-              <span className="section-kicker">CURRENT SESSION</span>
-              <h2>Log your workout</h2>
+              <span className="section-kicker">{t("workout.currentSession")}</span>
+              <h2>{t("workout.logYourWorkout")}</h2>
             </div>
-            <button className="quiet-button" type="button" onClick={resetSession}>Clear</button>
+            <button className="quiet-button" type="button" onClick={resetSession}>{t("workout.clear")}</button>
           </div>
 
           <div className="session-meta panel">
             <label className="form-field">
-              <span>Session name</span>
-              <input value={session.title} onChange={(event) => setSession((current) => ({ ...current, title: event.target.value }))} placeholder="e.g. Push day" />
+              <span>{t("workout.sessionName")}</span>
+              <input value={session.title} onChange={(event) => setSession((current) => ({ ...current, title: event.target.value }))} placeholder={t("workout.sessionPlaceholder")} />
             </label>
             <label className="form-field date-field">
-              <span>Date</span>
+              <span>{t("workout.date")}</span>
               <div className="input-with-icon"><CalendarDays size={16} /><input type="date" value={session.date} onChange={(event) => setSession((current) => ({ ...current, date: event.target.value }))} /></div>
             </label>
           </div>
@@ -188,40 +190,40 @@ export function WorkoutPage({ onNavigate }: { onNavigate?: (path: string) => voi
           {session.entries.length === 0 ? (
             <div className="session-empty panel">
               <div className="empty-ring"><ListPlus size={24} /></div>
-              <h3>Your session is waiting</h3>
-              <p>Choose a movement from the library to start logging sets.</p>
+              <h3>{t("workout.sessionWaiting")}</h3>
+              <p>{t("workout.chooseMovement")}</p>
             </div>
           ) : (
             <div className="entry-list">
               {session.entries.map((entry, index) => (
-                <ExerciseEntry key={entry.id} entry={entry} index={index} onRemove={() => removeExercise(entry.id)} onAddSet={() => updateEntry(entry.id, (current) => ({ ...current, sets: [...current.sets, newSet()] }))} onRemoveSet={(setId) => updateEntry(entry.id, (current) => ({ ...current, sets: current.sets.length > 1 ? current.sets.filter((set) => set.id !== setId) : current.sets }))} onUpdateSet={updateSet} />
+                <ExerciseEntry key={entry.id} entry={entry} index={index} t={t} onRemove={() => removeExercise(entry.id)} onAddSet={() => updateEntry(entry.id, (current) => ({ ...current, sets: [...current.sets, newSet()] }))} onRemoveSet={(setId) => updateEntry(entry.id, (current) => ({ ...current, sets: current.sets.length > 1 ? current.sets.filter((set) => set.id !== setId) : current.sets }))} onUpdateSet={updateSet} />
               ))}
             </div>
           )}
 
           <div className="notes-panel panel">
             <label className="form-field">
-              <span>Session notes <em>Optional</em></span>
-              <textarea value={session.notes} onChange={(event) => setSession((current) => ({ ...current, notes: event.target.value }))} placeholder="How did it feel? Any wins to remember?" rows={3} />
+              <span>{t("workout.notes")} <em>{t("common.optional")}</em></span>
+              <textarea value={session.notes} onChange={(event) => setSession((current) => ({ ...current, notes: event.target.value }))} placeholder={t("workout.notesPlaceholder")} rows={3} />
             </label>
           </div>
           {saveError ? <div className="alert alert-error save-alert">{saveError}</div> : null}
-          {savedId ? <div className="alert alert-info save-alert">Saved to Blocks. Session id: <code>{savedId}</code>{onNavigate ? <button className="link-button save-link" type="button" onClick={() => onNavigate("/workouts")}>View saved workouts</button> : null}</div> : null}
-          <button className="primary-button save-session" disabled={isSaving} type="submit"><Check size={17} /> {isSaving ? "Saving…" : saved ? "Session saved" : "Save session"}</button>
+          {savedId ? <div className="alert alert-info save-alert">{t("workout.savedToBlocks")} <code>{savedId}</code>{onNavigate ? <button className="link-button save-link" type="button" onClick={() => onNavigate("/workouts")}>{t("workout.viewSaved")}</button> : null}</div> : null}
+          <button className="primary-button save-session" disabled={isSaving} type="submit"><Check size={17} /> {isSaving ? t("workout.saving") : saved ? t("workout.sessionSaved") : t("workout.saveSession")}</button>
         </form>
 
         <div className="library-column">
           <div className="section-heading library-heading">
             <div>
-              <span className="section-kicker">MOVEMENT LIBRARY</span>
-              <h2>Add to your session</h2>
+              <span className="section-kicker">{t("workout.library")}</span>
+              <h2>{t("workout.addToSession")}</h2>
             </div>
-            <span className="library-count">{filteredCatalog.length} options</span>
+            <span className="library-count">{filteredCatalog.length} {t("workout.options")}</span>
           </div>
           <MuscleMap exercise={previewExercise} />
-          <div className="search-box library-search"><Search size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search movements or sports" /></div>
+          <div className="search-box library-search"><Search size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t("workout.searchPlaceholder")} /></div>
           <div className="category-row">
-            {categoryOptions.map((option) => <button key={option} className={category === option ? "category-pill active" : "category-pill"} onClick={() => setCategory(option)} type="button">{option}</button>)}
+            {categoryOptions.map((option) => <button key={option} className={category === option ? "category-pill active" : "category-pill"} onClick={() => setCategory(option)} type="button">{t(`category.${option.toLowerCase()}`, option)}</button>)}
           </div>
           <div className="library-list">
             {(showAll ? filteredCatalog : filteredCatalog.slice(0, 9)).map((exercise) => {
@@ -233,9 +235,9 @@ export function WorkoutPage({ onNavigate }: { onNavigate?: (path: string) => voi
               </button>;
             })}
           </div>
-          {filteredCatalog.length > 9 ? <button className="library-more" onClick={() => setShowAll((value) => !value)} type="button">{showAll ? "Show fewer" : `Show ${filteredCatalog.length - 9} more`} <ChevronDown size={15} className={showAll ? "rotate" : ""} /></button> : null}
-          {filteredCatalog.length === 0 ? <div className="library-no-results">No movements match that search.</div> : null}
-          <div className="library-tip"><Clock3 size={16} /><span><strong>Track it your way.</strong> Weighted work gets reps and load, cardio gets minutes, and bodyweight stays simple.</span></div>
+          {filteredCatalog.length > 9 ? <button className="library-more" onClick={() => setShowAll((value) => !value)} type="button">{showAll ? t("workout.showFewer") : t("workout.showMore").replace("{count}", String(filteredCatalog.length - 9))} <ChevronDown size={15} className={showAll ? "rotate" : ""} /></button> : null}
+          {filteredCatalog.length === 0 ? <div className="library-no-results">{t("workout.noResults")}</div> : null}
+          <div className="library-tip"><Clock3 size={16} /><span><strong>{t("workout.trackIt")}</strong> {t("workout.measurementHint")}</span></div>
         </div>
       </div>
     </section>
@@ -250,21 +252,21 @@ function ModeIcon({ mode }: { mode: MeasurementMode }) {
   return mode === "weighted" ? <Dumbbell size={16} /> : mode === "timed" ? <Timer size={16} /> : <Activity size={16} />;
 }
 
-function ExerciseEntry({ entry, index, onRemove, onAddSet, onRemoveSet, onUpdateSet }: { entry: WorkoutEntry; index: number; onRemove: () => void; onAddSet: () => void; onRemoveSet: (setId: string) => void; onUpdateSet: (exerciseId: string, setId: string, patch: Partial<WorkoutSet>) => void }) {
+function ExerciseEntry({ entry, index, t, onRemove, onAddSet, onRemoveSet, onUpdateSet }: { entry: WorkoutEntry; index: number; t: (key: string, fallback?: string) => string; onRemove: () => void; onAddSet: () => void; onRemoveSet: (setId: string) => void; onUpdateSet: (exerciseId: string, setId: string, patch: Partial<WorkoutSet>) => void }) {
   return <div className="exercise-entry panel">
-    <div className="entry-header"><div className={`entry-index ${entry.mode}`}><ModeIcon mode={entry.mode} /></div><div className="entry-title"><span>{String(index + 1).padStart(2, "0")} · {formatMode(entry.mode)}</span><h3>{entry.name}</h3></div><button className="icon-button remove-entry" type="button" aria-label={`Remove ${entry.name}`} onClick={onRemove}><Trash2 size={16} /></button></div>
+    <div className="entry-header"><div className={`entry-index ${entry.mode}`}><ModeIcon mode={entry.mode} /></div><div className="entry-title"><span>{String(index + 1).padStart(2, "0")} · {formatMode(entry.mode, t)}</span><h3>{entry.name}</h3></div><button className="icon-button remove-entry" type="button" aria-label={t("workout.removeExercise").replace("{name}", entry.name)} onClick={onRemove}><Trash2 size={16} /></button></div>
     <div className="entry-divider" />
     <div className={`set-table ${entry.mode}`}>
-      <div className="set-table-head"><span>SET</span>{entry.mode !== "timed" ? <span>REPS</span> : <span>MINUTES</span>}{entry.mode === "weighted" ? <span>LOAD (KG)</span> : <span />}</div>
+      <div className="set-table-head"><span>{t("workout.setNumber", "SET").replace(" {number}", "")}</span>{entry.mode !== "timed" ? <span>{t("workout.reps")}</span> : <span>{t("workout.minutesForSet", "MINUTES").replace(" for set {number}", "")}</span>}{entry.mode === "weighted" ? <span>{t("workout.load")}</span> : <span />}</div>
       {entry.sets.map((set, setIndex) => <div className={set.completed ? "set-row completed" : "set-row"} key={set.id}>
         <span className="set-number">{setIndex + 1}</span>
-        {entry.mode !== "timed" ? <input aria-label={`Reps for set ${setIndex + 1}`} inputMode="numeric" min="0" type="number" value={set.reps} onChange={(event) => onUpdateSet(entry.id, set.id, { reps: event.target.value })} placeholder="—" /> : <input aria-label={`Minutes for set ${setIndex + 1}`} inputMode="numeric" min="0" type="number" value={set.minutes} onChange={(event) => onUpdateSet(entry.id, set.id, { minutes: event.target.value })} placeholder="—" />}
-        {entry.mode === "weighted" ? <input aria-label={`Weight for set ${setIndex + 1}`} inputMode="decimal" min="0" step="0.5" type="number" value={set.weight} onChange={(event) => onUpdateSet(entry.id, set.id, { weight: event.target.value })} placeholder="—" /> : <span />}
-        <button className={set.completed ? "set-check checked" : "set-check"} type="button" aria-label={set.completed ? "Mark set incomplete" : "Mark set complete"} onClick={() => onUpdateSet(entry.id, set.id, { completed: !set.completed })}>{set.completed ? <Check size={14} /> : null}</button>
-        <button className="set-remove" type="button" aria-label="Remove set" onClick={() => onRemoveSet(set.id)}><Minus size={14} /></button>
+        {entry.mode !== "timed" ? <input aria-label={t("workout.repsForSet").replace("{number}", String(setIndex + 1))} inputMode="numeric" min="0" type="number" value={set.reps} onChange={(event) => onUpdateSet(entry.id, set.id, { reps: event.target.value })} placeholder="—" /> : <input aria-label={t("workout.minutesForSet").replace("{number}", String(setIndex + 1))} inputMode="numeric" min="0" type="number" value={set.minutes} onChange={(event) => onUpdateSet(entry.id, set.id, { minutes: event.target.value })} placeholder="—" />}
+        {entry.mode === "weighted" ? <input aria-label={t("workout.weightForSet").replace("{number}", String(setIndex + 1))} inputMode="decimal" min="0" step="0.5" type="number" value={set.weight} onChange={(event) => onUpdateSet(entry.id, set.id, { weight: event.target.value })} placeholder="—" /> : <span />}
+        <button className={set.completed ? "set-check checked" : "set-check"} type="button" aria-label={set.completed ? t("workout.markIncomplete") : t("workout.markComplete")} onClick={() => onUpdateSet(entry.id, set.id, { completed: !set.completed })}>{set.completed ? <Check size={14} /> : null}</button>
+        <button className="set-remove" type="button" aria-label={t("workout.removeSet")} onClick={() => onRemoveSet(set.id)}><Minus size={14} /></button>
       </div>)}
     </div>
-    <button className="add-set" type="button" onClick={onAddSet}><Plus size={15} /> Add set</button>
-    <div className="mode-note"><span className={`mode-dot ${entry.mode}`} />{modeLabel(entry.mode)}</div>
+    <button className="add-set" type="button" onClick={onAddSet}><Plus size={15} /> {t("workout.addSet")}</button>
+    <div className="mode-note"><span className={`mode-dot ${entry.mode}`} />{t(`mode.${entry.mode}`, modeLabel(entry.mode))}</div>
   </div>;
 }
