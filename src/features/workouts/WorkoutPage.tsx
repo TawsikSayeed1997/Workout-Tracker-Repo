@@ -39,6 +39,7 @@ type SessionDraft = {
 };
 
 const SESSION_KEY = "workout-tracker:session";
+const PREFILL_KEY = "workout-tracker:prefill";
 
 function today() {
   return new Date().toISOString().slice(0, 10);
@@ -54,6 +55,13 @@ function newSession(): SessionDraft {
 
 function readSession(): SessionDraft {
   try {
+    const prefill = localStorage.getItem(PREFILL_KEY);
+    if (prefill) {
+      const parsed = JSON.parse(prefill) as { title?: string; exerciseIds?: string[] };
+      const exercises = (parsed.exerciseIds ?? []).map((id) => workoutCatalog.find((exercise) => exercise.id === id)).filter((exercise): exercise is Exercise => Boolean(exercise));
+      localStorage.removeItem(PREFILL_KEY);
+      if (exercises.length) return { ...newSession(), title: parsed.title?.trim() || "Routine session", entries: exercises.map((exercise) => ({ ...exercise, sets: [newSet(), newSet(), newSet()] })) };
+    }
     const stored = localStorage.getItem(SESSION_KEY);
     if (stored) return JSON.parse(stored) as SessionDraft;
   } catch {

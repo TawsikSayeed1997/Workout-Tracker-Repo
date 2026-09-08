@@ -398,12 +398,41 @@ tbody tr:last-child td { border-bottom: 0; }
 .save-link { margin-left: 8px; }
 .dashboard-skeleton-header { display: grid; gap: 10px; margin-bottom: 24px; }
 .skeleton-panel { min-height: 280px; }
+.routines-page { max-width: 1180px; }
+.routines-header { margin-bottom: 24px; }
+.routine-grid { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.routine-card { gap: 0; margin: 0; min-height: 304px; padding: 19px; }
+.routine-card-top { align-items: flex-start; display: flex; justify-content: space-between; }
+.routine-card-icon { align-items: center; background: hsl(var(--primary) / .1); border-radius: 11px; color: hsl(var(--primary)); display: grid; height: 38px; place-items: center; width: 38px; }
+.routine-delete { color: hsl(var(--muted-foreground)); padding: 0; }
+.routine-delete:hover { color: hsl(var(--destructive)); }
+.routine-card-copy { display: grid; gap: 5px; margin: 22px 0 15px; }
+.routine-card-copy h2 { font-size: 22px; margin: 0; }
+.routine-card-copy p { color: hsl(var(--muted-foreground)); font-size: 13px; line-height: 1.45; margin: 0; }
+.routine-exercise-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.routine-exercise-list span { background: hsl(var(--secondary)); border-radius: 999px; color: hsl(var(--accent-foreground)); font-size: 11px; font-weight: 600; padding: 5px 8px; }
+.routine-card-footer { align-items: center; border-top: 1px solid hsl(var(--border) / .75); color: hsl(var(--muted-foreground)); display: flex; font-size: 12px; justify-content: space-between; margin-top: auto; padding-top: 15px; }
+.routine-start { min-height: 36px; padding: 0 11px; }
+.routine-builder { gap: 20px; margin-bottom: 16px; padding: 20px; }
+.routine-form-top { display: grid; gap: 14px; grid-template-columns: 1.5fr 1fr; }
+.routine-exercise-picker { display: grid; gap: 11px; }
+.routine-picker-heading { align-items: center; display: flex; justify-content: space-between; }
+.routine-picker-heading small { color: hsl(var(--muted-foreground)); font-size: 12px; }
+.routine-exercise-grid { display: grid; gap: 7px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.routine-exercise { align-items: center; background: hsl(var(--background) / .56); border: 1px solid hsl(var(--border)); border-radius: 9px; color: hsl(var(--foreground)); display: flex; font-size: 12px; gap: 8px; min-height: 42px; padding: 7px 9px; text-align: left; }
+.routine-exercise:hover, .routine-exercise.selected { background: hsl(var(--primary) / .08); border-color: hsl(var(--primary) / .3); color: hsl(var(--primary)); }
+.routine-exercise > span:nth-child(2) { flex: 1; }
+.routine-exercise-icon { align-items: center; background: hsl(var(--secondary)); border-radius: 6px; color: hsl(var(--muted-foreground)); display: grid; height: 26px; place-items: center; width: 26px; }
+.routine-exercise.selected .routine-exercise-icon { background: hsl(var(--primary) / .12); color: hsl(var(--primary)); }
+.routine-builder-actions { align-items: center; display: flex; justify-content: space-between; gap: 12px; }
 
 @media (max-width: 1040px) {
   .workout-layout { grid-template-columns: minmax(0, 1fr); }
   .library-column { order: -1; }
   .library-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .dashboard-grid { grid-template-columns: 1fr; }
+  .routine-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .routine-exercise-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 680px) {
   .workout-hero { align-items: flex-start; flex-direction: column; }
@@ -418,6 +447,9 @@ tbody tr:last-child td { border-bottom: 0; }
   .chart-summary { align-items: flex-start; flex-direction: column; gap: 4px; }
   .history-card { padding: 16px; }
   .history-stats { gap: 10px 16px; }
+  .routine-grid { grid-template-columns: 1fr; }
+  .routine-form-top, .routine-exercise-grid { grid-template-columns: 1fr; }
+  .routine-builder-actions { align-items: stretch; flex-direction: column; }
   .set-table-head, .set-row { gap: 5px; grid-template-columns: 32px minmax(65px, 1fr) minmax(65px, 1fr) 26px 20px; }
   .set-table:not(.weighted) .set-table-head, .set-table:not(.weighted) .set-row { grid-template-columns: 32px minmax(75px, 1fr) 26px 20px; }
   main { padding: 18px 14px; }

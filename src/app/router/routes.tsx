@@ -9,6 +9,7 @@ import { NotFoundPage } from "../../features/auth/NotFoundPage";
 import { ProfilePage } from "../../features/profile/ProfilePage";
 import { DashboardPage } from "../../features/dashboard/DashboardPage";
 import { SavedWorkoutsPage } from "../../features/workouts/SavedWorkoutsPage";
+import { RoutinesPage } from "../../features/workouts/RoutinesPage";
 import { WorkoutPage } from "../../features/workouts/WorkoutPage";
 
 export function AppRouter() {
@@ -51,7 +52,7 @@ export function AppRouter() {
     );
   }
 
-  if (!["/", "/workouts", "/add-workout", "/profile", "/error"].includes(path)) {
+  if (!["/", "/workouts", "/routines", "/add-workout", "/profile", "/error"].includes(path)) {
     return <NotFoundPage onNavigate={navigate} />;
   }
 
@@ -60,6 +61,7 @@ export function AppRouter() {
       <AppShell activePath={path} onNavigate={navigate}>
         {path === "/" ? <DashboardPage onNavigate={navigate} /> : null}
         {path === "/workouts" ? <SavedWorkoutsPage onNavigate={navigate} /> : null}
+        {path === "/routines" ? <RoutinesPage onNavigate={navigate} /> : null}
         {path === "/add-workout" ? <WorkoutPage onNavigate={navigate} /> : null}
         {path === "/profile" ? <ProfilePage /> : null}
         {path === "/error" ? <ErrorPage /> : null}
