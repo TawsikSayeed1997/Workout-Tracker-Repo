@@ -22,11 +22,11 @@ const MODULES = ["common"];
 
 function isUsableTranslation(value: unknown): value is string {
   if (typeof value !== "string" || !value.trim()) return false;
-  const normalized = value.trim().toLowerCase();
+  const normalized = value.trim().toLowerCase().replace(/\s+/g, "");
   // Localization returns this marker for keys that exist in the module but
   // are not translated for the selected language. It must never replace the
   // app's local fallback copy.
-  return normalized !== "[key missing]" && normalized !== "key missing";
+  return normalized !== "[keymissing]" && normalized !== "keymissing";
 }
 
 function normalizeLanguage(raw: Record<string, unknown>): LocalizationLanguage {
